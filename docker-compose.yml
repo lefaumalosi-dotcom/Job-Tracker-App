@@ -1,0 +1,17 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: job-tracker-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: job_tracker
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: jobuser
+      MYSQL_PASSWORD: jobpass
+    ports:
+      - "3306:3306"
+    volumes:
+      - job_tracker_mysql_data:/var/lib/mysql
+
+volumes:
+  job_tracker_mysql_data:
