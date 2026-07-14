@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">Job Form</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: #333; }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        header { background: white; padding: 20px 0; margin-bottom: 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { font-size: 28px; margin-bottom: 10px; }
+        .header-subtitle { color: #666; }
+        .form-container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 14px; }
+        input, select, textarea { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; font-family: inherit; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: #3498db; box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1); }
+        textarea { resize: vertical; min-height: 120px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-row-full { grid-column: 1 / -1; }
+        .error { color: #e74c3c; font-size: 12px; margin-top: 4px; }
+        .form-group.error input,
+        .form-group.error select,
+        .form-group.error textarea { border-color: #e74c3c; }
+        .button-group { display: flex; gap: 10px; margin-top: 30px; }
+        .btn { padding: 12px 24px; border: none; border-radius: 4px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.2s; }
+        .btn-primary { background: #3498db; color: white; }
+        .btn-primary:hover { background: #2980b9; }
+        .btn-secondary { background: #95a5a6; color: white; }
+        .btn-secondary:hover { background: #7f8c8d; }
+        .form-subtitle { color: #666; font-size: 14px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1 th:text="${pageTitle}">Job Form</h1>
+        <p class="header-subtitle" th:text="${formSubtitle}">Form description</p>
+    </header>
+
+    <div class="form-container">
+        <form th:action="${form.id} ? @{/jobs/{id}(id=${form.id})} : @{/jobs}" method="post" th:object="${form}">
+            <p class="form-subtitle">Essential Information</p>
+
+            <div class="form-row">
+                <div class="form-group" th:classappend="${#fields.hasErrors('companyName')} ? 'error' : ''">
+                    <label for="companyName">Company Name *</label>
+                    <input type="text" id="companyName" th:field="*{companyName}" required>
+                    <div class="error" th:if="${#fields.hasErrors('companyName')}" th:errors="*{companyName}"></div>
+                </div>
+                <div class="form-group" th:classappend="${#fields.hasErrors('positionTitle')} ? 'error' : ''">
+                    <label for="positionTitle">Position Title *</label>
+                    <input type="text" id="positionTitle" th:field="*{positionTitle}" required>
+                    <div class="error" th:if="${#fields.hasErrors('positionTitle')}" th:errors="*{positionTitle}"></div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="location">Location</label>
+                    <input type="text" id="location" th:field="*{location}" placeholder="e.g., San Francisco, CA or Remote">
+                </div>
+                <div class="form-group">
+                    <label for="salaryRange">Salary Range</label>
+                    <input type="text" id="salaryRange" th:field="*{salaryRange}" placeholder="e.g., $100k - $150k">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="recruiter">Recruiter Name</label>
+                    <input type="text" id="recruiter" th:field="*{recruiter}">
+                </div>
+                <div class="form-group">
+                    <label for="jobUrl">Job URL</label>
+                    <input type="url" id="jobUrl" th:field="*{jobUrl}">
+                </div>
+            </div>
+
+            <p class="form-subtitle">Tracking Information</p>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <select id="status" th:field="*{status}">
+                        <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="priority">Priority</label>
+                    <select id="priority" th:field="*{priority}">
+                        <option th:each="p : ${priorities}" th:value="${p}" th:text="${p}"></option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="appliedDate">Applied Date</label>
+                    <input type="date" id="appliedDate" th:field="*{appliedDate}">
+                </div>
+                <div class="form-group">
+                    <label for="followUpDate">Follow-up Date</label>
+                    <input type="date" id="followUpDate" th:field="*{followUpDate}">
+                </div>
+            </div>
+
+            <div class="form-row form-row-full">
+                <div class="form-group">
+                    <label for="nextStep">Next Step</label>
+                    <input type="text" id="nextStep" th:field="*{nextStep}" placeholder="e.g., Send thank you email, Prepare for technical round">
+                </div>
+            </div>
+
+            <div class="form-row form-row-full">
+                <div class="form-group">
+                    <label for="notes">Notes</label>
+                    <textarea id="notes" th:field="*{notes}" placeholder="Add any additional details about this opportunity..."></textarea>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn btn-primary" th:text="${submitLabel}">Save Job</button>
+                <a href="/jobs" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>
